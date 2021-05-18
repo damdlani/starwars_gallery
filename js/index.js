@@ -47,6 +47,8 @@
       loading: false,
       error: false,
     });
+    renderCharacters();
+
   };
 
   const fetchImages = async () => {
@@ -57,6 +59,23 @@
     });
   };
 
+  const nameToHTML = ({ name }) => {
+
+    const bookHTMLString = `
+    <p>${name}</p>
+  `;
+
+    return bookHTMLString;
+  };
+
+  const renderCharacters = () => {
+    const list = document.querySelector(".js-list")
+
+    const charactersToRender = characters.characters.map(nameToHTML).join("");
+    console.log(charactersToRender);
+    list.innerHTML = charactersToRender;
+  }
+
   const findCharacterImage = ({ name: characterName }) => {
     const { image } = images?.find(({ name: imageName }) => {
       return imageName === characterName;
@@ -66,7 +85,7 @@
   };
 
   const renderStatus = ({ loading, error }) => {
-    const statusElement = document.querySelector(".status");
+    const statusElement = document.querySelector(".js-status");
 
     if (loading) {
       statusElement.classList.add("status--loading");
@@ -76,7 +95,10 @@
     if (error) {
       statusElement.classList.remove("status--loading");
       statusElement.classList.remove("status--hidden");
-      statusElement.innerHTML = "occured error an - try please again";
+      statusElement.innerHTML = "occured error an - try please again ";
+      const errorYoda = statusElement.appendChild(document.createElement("p"));
+      errorYoda.classList.add("status--yoda");
+      errorYoda.innerHTML = " È";
     }
 
     if (!loading && !error) {
