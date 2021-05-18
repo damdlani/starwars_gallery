@@ -1,0 +1,32 @@
+@font-face {
+  src: url(/fonts/Starjedi.ttf);
+  font-family: star-jedi;
+}
+@font-face {
+  src: url(/fonts/Starjhol.ttf);
+  font-family: star-hol;
+}
+@font-face {
+  src: url(/fonts/StarWars.ttf);
+  font-family: star-wars;
+}
+
+*,
+::after,
+::before {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+:root {
+  font-family: star-jedi;
+  overflow-y: scroll;
+  min-height: 100vh;
+}
+
+.wrapper {
+  max-width: 1150px;
+  margin: 0 auto;
+  padding: 20px 40px;
+}
