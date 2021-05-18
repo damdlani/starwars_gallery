@@ -1,0 +1,51 @@
+@font-face {
+  src: url(/fonts/Starjedi.ttf);
+  font-family: star-jedi;
+}
+@font-face {
+  src: url(/fonts/Starjhol.ttf);
+  font-family: star-hol;
+}
+
+@keyframes spinner {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.status {
+  position: absolute;
+  z-index: 100;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: star-jedi;
+  font-size: 24;
+}
+@media (max-width: 768px) {
+  .status {
+    font-size: 18;
+  }
+}
+
+.status--hidden {
+  display: none;
+}
+
+.status--loading::after {
+  content: "";
+  margin: 20px;
+  width: 30px;
+  height: 30px;
+  border-top: 3px solid black;
+  border-radius: 50px;
+  animation: spinner 1s infinite forwards;
+}
