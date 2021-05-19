@@ -10,6 +10,7 @@
   let characters = {};
   let images = [];
   let currentPage = 1;
+  let darkTheme = false;
   const maxItemsPerPage = 10;
 
   const fetchData = async (directory) => {
@@ -53,6 +54,7 @@
     });
     renderCharacters();
     renderPagination();
+    
   };
 
   const populateImages = async () => {
@@ -65,7 +67,7 @@
 
   const characterToHTML = ({ name }) => {
     const bookHTMLString = `
-    <div class="gallery__item">
+    <div class="gallery__item ${darkTheme ? 'gallery__item--dark' : ""}">
     <p>${name}</p>
 
     </div>
@@ -85,7 +87,7 @@
 
   const renderPagination = () => {
     const paginationElement = document.querySelector(".js-pagination");
-    console.log(!characters.previousPage)
+
     const paginationHTML = `
       <button ${!characters.previousPage ? 'disabled' : ""} class="js-prevPage">Prev</button>
       <span>${currentPage} of ${characters.numberOfPages}</span>
@@ -94,6 +96,15 @@
     paginationElement.innerHTML = paginationHTML;
     bindPaginationButtons();
 
+  }
+
+  const changeTheme = () => {
+    const button = document.querySelector(".js-themeButton");
+    button.addEventListener("click", () => {
+      darkTheme = !darkTheme;
+      renderCharacters();
+      console.log(darkTheme)
+    })
   }
 
   const findCharacterImage = (characterName) => {
@@ -148,6 +159,7 @@
     renderStatus(status);
     populateImages();
     populateCharacters(1);
+    changeTheme();
     
   };
   init();

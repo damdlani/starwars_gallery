@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="/styles/global.css">
   <link rel="stylesheet" href="/styles/status.css">
   <link rel="stylesheet" href="/styles/header.css">
+  <link rel="stylesheet" href="/styles/theme.css">
   <link rel="stylesheet" href="/styles/gallery.css">
   <link rel="stylesheet" href="/styles/pagination.css">
   <link rel="stylesheet" href="/styles/footer.css">
@@ -19,15 +20,23 @@
 
 <body>
   <div class="wrapper">
-    <header class="header">Star Wars Gallery</header>
+    <header class="header">
+      <h1>Star Wars Gallery</h1>
+      <div>
+        <span>light side</span>
+        <label class="theme">
+          <input hidden type="checkbox" class="theme__button js-themeButton">
+          <span class="theme__slider"></span>
+        </label>
+        <span>dark side</span>
+      </div>
+    </header>
     <main>
       <section class="gallery js-gallery">
 
       </section>
       <section class="js-pagination">
-        <!-- <button class="js-prevPage">Prev</button>
-        <span>1</span>
-        <button class="js-nextPage">Next</button> -->
+
       </section>
     </main>
 
