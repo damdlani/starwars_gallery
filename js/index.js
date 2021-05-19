@@ -10,6 +10,7 @@
   let characters = {};
   let images = [];
   let currentPage = 1;
+  const maxItemsPerPage = 10;
 
   const fetchData = async (directory) => {
     try {
@@ -32,56 +33,89 @@
   };
 
   const populateCharacters = async (page) => {
-    const { count, next, previous, results } = await fetchData(`${SWAPI_URL}?page=${page}`);;
+    const { count, next, previous, results } = await fetchData(
+      `${SWAPI_URL}?page=${page}`
+    );
 
     characters = {
       ...characters,
       count,
-      nextPage: next,
-      previousPage: previous,
+      numberOfPages: Math.ceil(count / maxItemsPerPage),
+      nextPage: next ? parseInt(next.slice(-1)) : null,
+      previousPage: previous ? parseInt(previous.slice(-1)) : null,
       characters: results,
     };
-    
+    console.log(characters);
     renderStatus({
       ...status,
       loading: false,
       error: false,
     });
     renderCharacters();
-
+    renderPagination();
   };
 
-  const fetchImages = async () => {
+  const populateImages = async () => {
     const data = await fetchData(IMAGES_API_URL);
-    
+
     images = data.map(({ name, image }) => {
       return { name, image };
     });
   };
 
-  const nameToHTML = ({ name }) => {
-
+  const characterToHTML = ({ name }) => {
     const bookHTMLString = `
+    <div class="gallery__item">
     <p>${name}</p>
+
+    </div>
   `;
+    // <image class="image" src=${findCharacterImage(name)} />
+    // <div class="imageContainer" style="background-image: url(${findCharacterImage(name)});"></div>
 
     return bookHTMLString;
   };
 
   const renderCharacters = () => {
-    const list = document.querySelector(".js-list")
+    const list = document.querySelector(".js-gallery");
 
-    const charactersToRender = characters.characters.map(nameToHTML).join("");
-    console.log(charactersToRender);
+    const charactersToRender = characters.characters.map(characterToHTML).join("");
     list.innerHTML = charactersToRender;
+  };
+
+  const renderPagination = () => {
+    const paginationElement = document.querySelector(".js-pagination");
+    console.log(!characters.previousPage)
+    const paginationHTML = `
+      <button ${!characters.previousPage ? 'disabled' : ""} class="js-prevPage">Prev</button>
+      <span>${currentPage} of ${characters.numberOfPages}</span>
+      <button ${!characters.nextPage ? 'disabled' : ""} class="js-nextPage">Next</button>
+    `
+    paginationElement.innerHTML = paginationHTML;
+    bindPaginationButtons();
+
   }
 
-  const findCharacterImage = ({ name: characterName }) => {
+  const findCharacterImage = (characterName) => {
     const { image } = images?.find(({ name: imageName }) => {
       return imageName === characterName;
     });
     console.log(image);
     return image;
+  };
+
+  const bindPaginationButtons = () => {
+    const nextPaginationButton = document.querySelector(".js-nextPage");
+    const previousPaginationButton = document.querySelector(".js-prevPage");
+
+    nextPaginationButton.addEventListener("click", () => {
+      currentPage = characters.nextPage;
+      populateCharacters(currentPage);
+    });
+    previousPaginationButton.addEventListener("click", () => {
+      currentPage = characters.previousPage;
+      populateCharacters(currentPage);
+    });
   };
 
   const renderStatus = ({ loading, error }) => {
@@ -107,7 +141,14 @@
       statusElement.innerHTML = "";
     }
   };
+
   renderStatus(status);
-  populateCharacters(1);
-  fetchImages();
+
+  const init = () => {
+    renderStatus(status);
+    populateImages();
+    populateCharacters(1);
+    
+  };
+  init();
 }
