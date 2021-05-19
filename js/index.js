@@ -2,11 +2,6 @@
   const SWAPI_URL = "http://swapi.dev/api/people/";
   const IMAGES_API_URL = "https://akabab.github.io/starwars-api/api/all.json";
 
-  const status = {
-    loading: true,
-    error: false,
-  };
-
   let characters = {};
   let images = [];
   let currentPage = 1;
@@ -15,18 +10,22 @@
 
   const fetchData = async (directory) => {
     try {
-      const response = await fetch(directory);
+      renderStatus({
+        loading: true,
+        error: false,
+      });
 
+      const response = await fetch(directory);
+      
       if (!response.ok) {
         throw new Error(response.statusText);
       }
-
+      
       const data = await response.json();
       return data;
     } catch (error) {
       console.error(error);
       renderStatus({
-        ...status,
         loading: false,
         error: true,
       });
@@ -48,10 +47,10 @@
     };
     console.log(characters);
     renderStatus({
-      ...status,
       loading: false,
       error: false,
     });
+    
     renderCharacters();
     renderPagination();
     
@@ -68,12 +67,11 @@
   const characterToHTML = ({ name }) => {
     const bookHTMLString = `
     <div class="gallery__item ${darkTheme ? 'gallery__item--dark' : ""}">
-    <p>${name}</p>
 
+      <div class="item__image" style="background-image: url(${findCharacterImage(name)});"></div>
+      <h2 class="item__name">${name.toLowerCase()}</h2>
     </div>
   `;
-    // <image class="image" src=${findCharacterImage(name)} />
-    // <div class="imageContainer" style="background-image: url(${findCharacterImage(name)});"></div>
 
     return bookHTMLString;
   };
@@ -89,9 +87,9 @@
     const paginationElement = document.querySelector(".js-pagination");
 
     const paginationHTML = `
-      <button ${!characters.previousPage ? 'disabled' : ""} class="js-prevPage">Prev</button>
-      <span>${currentPage} of ${characters.numberOfPages}</span>
-      <button ${!characters.nextPage ? 'disabled' : ""} class="js-nextPage">Next</button>
+      <button ${!characters.previousPage ? 'disabled' : ""} class="pagination__button js-prevPage">Prev</button>
+      <span>Page ${currentPage} of ${characters.numberOfPages}</span>
+      <button ${!characters.nextPage ? 'disabled' : ""} class="pagination__button js-nextPage">Next</button>
     `
     paginationElement.innerHTML = paginationHTML;
     bindPaginationButtons();
@@ -103,16 +101,15 @@
     button.addEventListener("click", () => {
       darkTheme = !darkTheme;
       renderCharacters();
-      console.log(darkTheme)
     })
   }
 
   const findCharacterImage = (characterName) => {
-    const { image } = images?.find(({ name: imageName }) => {
-      return imageName === characterName;
+    console.log(characterName)
+    const  image  = images?.find(({ name: imageName }) => {
+      return imageName.toLowerCase().includes(characterName.toLowerCase());
     });
-    console.log(image);
-    return image;
+    return image.image ? image.image : "" ; 
   };
 
   const bindPaginationButtons = () => {
@@ -121,18 +118,24 @@
 
     nextPaginationButton.addEventListener("click", () => {
       currentPage = characters.nextPage;
-      populateCharacters(currentPage);
+      loadAnotherPage();
     });
     previousPaginationButton.addEventListener("click", () => {
       currentPage = characters.previousPage;
-      populateCharacters(currentPage);
+      loadAnotherPage();
     });
   };
+
+  const loadAnotherPage = () => {
+    populateCharacters(currentPage);
+    window.scrollTo(0, 0);
+  }
 
   const renderStatus = ({ loading, error }) => {
     const statusElement = document.querySelector(".js-status");
 
     if (loading) {
+      statusElement.classList.remove("status--hidden");
       statusElement.classList.add("status--loading");
       statusElement.innerHTML = "Loading data is...";
     }
@@ -153,14 +156,11 @@
     }
   };
 
-  renderStatus(status);
 
   const init = () => {
-    renderStatus(status);
     populateImages();
-    populateCharacters(1);
+    populateCharacters(currentPage);
     changeTheme();
-    
   };
   init();
 }
