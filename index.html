@@ -13,36 +13,30 @@
   <link rel="stylesheet" href="/styles/theme.css">
   <link rel="stylesheet" href="/styles/gallery.css">
   <link rel="stylesheet" href="/styles/pagination.css">
-  <link rel="stylesheet" href="/styles/footer.css">
   <script defer src="js/index.js"></script>
   <title>Document</title>
 </head>
 
 <body>
   <div class="wrapper">
-    <header class="header">
+    <header class="header header--dark">
       <h1>Star Wars Gallery</h1>
-      <div>
-        <span>light side</span>
-        <label class="theme">
-          <input hidden type="checkbox" class="theme__button js-themeButton">
-          <span class="theme__slider"></span>
-        </label>
-        <span>dark side</span>
-      </div>
+
     </header>
-    <main>
-      <section class="gallery js-gallery">
-
-      </section>
-      <section class="js-pagination">
-
-      </section>
+    <div class="theme">
+      <span>dark side</span>
+      <label class="theme__box">
+        <input hidden type="checkbox" class="theme__button js-themeButton">
+        <span class="theme__slider"></span>
+      </label>
+      <span>light side</span>
+    </div>
+    <main class="main">
+      <section class="gallery js-gallery"></section>
+      <aside class="status js-status"></aside>
     </main>
-
-
-    <aside class="status js-status"></aside>
-    <footer class="footer">Krzysztof Kwieciński 2021 &copy;</footer>
+    <section class="pagination js-pagination"></section>
+    
   </div>
 </body>
 
