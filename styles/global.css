@@ -20,13 +20,17 @@
 }
 
 :root {
-  font-family: star-jedi;
+  font-family: arial;
   overflow-y: scroll;
   min-height: 100vh;
 }
 
 .wrapper {
-  max-width: 1150px;
-  margin: 0 auto;
-  padding: 20px 40px;
+  min-height: 100vh;
+  font-family: 'Roboto', sans-serif;
+  font-weight: bold;
+  padding: 20px 0 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }

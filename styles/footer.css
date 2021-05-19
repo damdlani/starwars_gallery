@@ -1,0 +1,9 @@
+.footer {
+  /* justify-self: flex-end; */
+  padding: 5px;
+  font-family: arial;
+  font-style: italic;
+  font-size: 12px;
+  text-align: center;
+  border-top: 1px black solid;
+}
