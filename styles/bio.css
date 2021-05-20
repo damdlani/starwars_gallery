@@ -1,0 +1,50 @@
+.bioSection {
+  color: #ffe81f;
+  font-family: star-jedi;
+  position: fixed;
+  top: 10%;
+  bottom: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 500px;
+  z-index: 2;
+  background-color: #000;
+  /* opacity: .95; */
+  border: 1px solid;
+  transition: transform .3s ease;
+}
+.bio {
+  width: 548px;
+  padding: 16px;
+  background-color: var(--unnamed-color-ffffff);
+  border: 1px solid var(--unnamed-color-8ecae6);
+  transition: easeIn 0.5s forwards;
+}
+.bio__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.bio__name {
+}
+
+.bio__note {
+  font-size: 16px;
+  margin-top: 10px;
+  transition: 0.3s ease;
+}
+.bio__exitButton {
+  position: absolute;
+  top: 2%;
+  right: 2%;
+  background-color: transparent;
+  border: none;
+  font-size: 24px;
+  transition: 0.1s ease;
+  color: #ffe81f;
+  
+}
+.bio__exitButton:hover {
+  color: #555;
+  cursor: pointer;
+}

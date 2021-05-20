@@ -7,11 +7,9 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  transition: .5s linear;
 }
 .gallery__item {
   flex-shrink: 0;
-  /* flex-grow: 1; */
   margin: 10px;
   flex-basis: 350px;
   border: 2px solid #ffe81f;
@@ -22,6 +20,11 @@
   grid-template-columns: 1fr;
   justify-content: center;
   padding-top: 15px;
+  transition:  .2s linear;
+}
+.gallery__item:hover {
+  cursor: pointer;
+  transform: scale(1.01);
 }
 .gallery__item--dark {
   color: white;

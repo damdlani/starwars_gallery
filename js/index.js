@@ -16,11 +16,11 @@
       });
 
       const response = await fetch(directory);
-      
+
       if (!response.ok) {
         throw new Error(response.statusText);
       }
-      
+
       const data = await response.json();
       return data;
     } catch (error) {
@@ -45,15 +45,14 @@
       previousPage: previous ? parseInt(previous.slice(-1)) : null,
       characters: results,
     };
-    console.log(characters);
+    console.log(results);
     renderStatus({
       loading: false,
       error: false,
     });
-    
+
     renderCharacters();
     renderPagination();
-    
   };
 
   const populateImages = async () => {
@@ -64,52 +63,126 @@
     });
   };
 
-  const characterToHTML = ({ name }) => {
-    const bookHTMLString = `
-    <div class="gallery__item ${darkTheme ? 'gallery__item--dark' : ""}">
+  const findCharacterImage = (characterName) => {
+    const image = images?.find(({ name: imageName }) => {
+      return imageName.toLowerCase().includes(characterName.toLowerCase());
+    });
+    return image ? image.image : "";
+  };
 
-      <div class="item__image" style="background-image: url(${findCharacterImage(name)});"></div>
+  const characterToHTML = ({ name }) => {
+    const characterHTMLString = `
+    <div class="gallery__item ${
+      darkTheme ? "gallery__item--dark" : ""
+    } js-showBioButton">
+
+      <div class="item__image" style="background-image: url(${findCharacterImage(
+        name
+      )});"></div>
       <h2 class="item__name">${name.toLowerCase()}</h2>
     </div>
   `;
 
-    return bookHTMLString;
+    return characterHTMLString;
   };
 
   const renderCharacters = () => {
-    const list = document.querySelector(".js-gallery");
+    const gallery = document.querySelector(".js-gallery");
 
-    const charactersToRender = characters.characters.map(characterToHTML).join("");
-    list.innerHTML = charactersToRender;
+    const charactersToRender = characters.characters
+      .map(characterToHTML)
+      .join("");
+    gallery.innerHTML = charactersToRender;
+
+    listenOnShowBio(true);
+  };
+
+  const listenOnShowBio = (listen) => {
+    const galleryItems = document.querySelectorAll(".js-showBioButton");
+    console.log(listen)
+    if (galleryItems && listen) {
+      console.log("adding")
+      galleryItems.forEach((button, index) => {
+        button.addEventListener("click", () => {
+          showBio(index);
+        });
+      });
+    }
+    if (!listen) {
+      console.log("removing")
+      galleryItems.forEach((button, index) => {
+        button.removeEventListener("click", () => {
+          showBio(index);
+        }, false);
+      });
+    }
+  };
+
+  const showBio = (index) => {
+    listenOnShowBio(false);
+    const bioSection = document.querySelector(".js-bio");
+    bioSection.classList.add("bioSection");
+    bioSection.innerHTML = characterDetailsToHTML(characters.characters[index]);
+    
+    listenOnHideButton();
+  };
+
+  const characterDetailsToHTML = (character) => {
+    console.log(character);
+    const { name, height, mass } = character;
+
+    const detailsHTMLString = `
+      <div class="bio">
+        <div class="bio__header">           
+            <h2 class="bio__name">${name.toLowerCase()}</h2>
+            <button class="bio__exitButton js-hideBioButton">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <p class="bio__note">${height}</p>
+        <p class="bio__note">${mass}</p>
+      </div>
+    `;
+    return detailsHTMLString;
+  };
+
+  const listenOnHideButton = () => {
+    const hideBioButton = document.querySelector(".js-hideBioButton");
+
+    hideBioButton.addEventListener("click", () => {
+      hideBio();
+    });
+  };
+
+  const hideBio = () => {
+    const bioSection = document.querySelector(".js-bio");
+
+    bioSection.classList.remove("bioSection");
+    bioSection.innerHTML = "";
   };
 
   const renderPagination = () => {
     const paginationElement = document.querySelector(".js-pagination");
 
     const paginationHTML = `
-      <button ${!characters.previousPage ? 'disabled' : ""} class="pagination__button js-prevPage">Prev</button>
+      <button ${
+        !characters.previousPage ? "disabled" : ""
+      } class="pagination__button js-prevPage">Prev</button>
       <span>Page ${currentPage} of ${characters.numberOfPages}</span>
-      <button ${!characters.nextPage ? 'disabled' : ""} class="pagination__button js-nextPage">Next</button>
-    `
+      <button ${
+        !characters.nextPage ? "disabled" : ""
+      } class="pagination__button js-nextPage">Next</button>
+    `;
     paginationElement.innerHTML = paginationHTML;
     bindPaginationButtons();
-
-  }
+  };
 
   const changeTheme = () => {
     const button = document.querySelector(".js-themeButton");
     button.addEventListener("click", () => {
       darkTheme = !darkTheme;
       renderCharacters();
-    })
-  }
-
-  const findCharacterImage = (characterName) => {
-    console.log(characterName)
-    const  image  = images?.find(({ name: imageName }) => {
-      return imageName.toLowerCase().includes(characterName.toLowerCase());
     });
-    return image.image ? image.image : "" ; 
   };
 
   const bindPaginationButtons = () => {
@@ -129,7 +202,8 @@
   const loadAnotherPage = () => {
     populateCharacters(currentPage);
     window.scrollTo(0, 0);
-  }
+    hideBio();
+  };
 
   const renderStatus = ({ loading, error }) => {
     const statusElement = document.querySelector(".js-status");
@@ -155,7 +229,6 @@
       statusElement.innerHTML = "";
     }
   };
-
 
   const init = () => {
     populateImages();
