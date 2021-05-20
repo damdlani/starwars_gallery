@@ -25,21 +25,28 @@
       <h1>Star Wars Gallery</h1>
 
     </header>
-    <div class="theme">
-      <span>dark side</span>
-      <label class="theme__box">
-        <input hidden type="checkbox" class="theme__button js-themeButton">
-        <span class="theme__slider"></span>
-      </label>
-      <span>light side</span>
+    <div class="subheader">
+      <div class="theme">
+        <span>dark side</span>
+        <label class="theme__box">
+          <input hidden type="checkbox" class="theme__button js-themeButton">
+          <span class="theme__slider"></span>
+        </label>
+        <span>light side</span>
+      </div>
+      <form class="js-searchForm">
+        <input type="text" required placeholder="Use your force" minlength="1" class="js-searchInput" />
+        <button type="submit" class="js-searchButton">Search</button>
+      </form>
+      <button class="js-homeButton">Home</button>
     </div>
     <main class="main">
       <section class="gallery js-gallery"></section>
-      <aside class="status js-status"></aside>
+      
     </main>
     <section class="js-bio"></section>
     <section class="pagination js-pagination"></section>
-    
+    <aside class="status js-status"></aside>
   </div>
 </body>
 

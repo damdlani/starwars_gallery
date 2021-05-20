@@ -33,19 +33,20 @@
   };
 
   const populateCharacters = async (page) => {
+    console.log(page);
     const { count, next, previous, results } = await fetchData(
-      `${SWAPI_URL}?page=${page}`
+      page ? page : SWAPI_URL
     );
 
     characters = {
       ...characters,
       count,
+      next,
+      previous,
       numberOfPages: Math.ceil(count / maxItemsPerPage),
-      nextPage: next ? parseInt(next.slice(-1)) : null,
-      previousPage: previous ? parseInt(previous.slice(-1)) : null,
       characters: results,
     };
-    console.log(results);
+    console.log(characters);
     renderStatus({
       loading: false,
       error: false,
@@ -92,16 +93,21 @@
     const charactersToRender = characters.characters
       .map(characterToHTML)
       .join("");
-    gallery.innerHTML = charactersToRender;
+
+    charactersToRender.length
+      ? (gallery.classList.remove("gallery--noResults"),
+        (gallery.innerHTML = charactersToRender))
+      : (gallery.classList.add("gallery--noResults"),
+        (gallery.innerHTML = `<div class="gallery__noResults">Sorry, no results were found.</div>`));
 
     listenOnShowBio(true);
   };
 
   const listenOnShowBio = (listen) => {
     const galleryItems = document.querySelectorAll(".js-showBioButton");
-    console.log(listen)
+    console.log(listen);
     if (galleryItems && listen) {
-      console.log("adding")
+      console.log("adding");
       galleryItems.forEach((button, index) => {
         button.addEventListener("click", () => {
           showBio(index);
@@ -109,11 +115,15 @@
       });
     }
     if (!listen) {
-      console.log("removing")
+      console.log("removing");
       galleryItems.forEach((button, index) => {
-        button.removeEventListener("click", () => {
-          showBio(index);
-        }, false);
+        button.removeEventListener(
+          "click",
+          () => {
+            showBio(index);
+          },
+          false
+        );
       });
     }
   };
@@ -123,7 +133,7 @@
     const bioSection = document.querySelector(".js-bio");
     bioSection.classList.add("bioSection");
     bioSection.innerHTML = characterDetailsToHTML(characters.characters[index]);
-    
+
     listenOnHideButton();
   };
 
@@ -166,11 +176,11 @@
 
     const paginationHTML = `
       <button ${
-        !characters.previousPage ? "disabled" : ""
+        !characters.previous ? "disabled" : ""
       } class="pagination__button js-prevPage">Prev</button>
-      <span>Page ${currentPage} of ${characters.numberOfPages}</span>
+      <span>Page ${characters.characters.length ? currentPage : 0} of ${characters.numberOfPages}</span>
       <button ${
-        !characters.nextPage ? "disabled" : ""
+        !characters.next ? "disabled" : ""
       } class="pagination__button js-nextPage">Next</button>
     `;
     paginationElement.innerHTML = paginationHTML;
@@ -190,17 +200,17 @@
     const previousPaginationButton = document.querySelector(".js-prevPage");
 
     nextPaginationButton.addEventListener("click", () => {
-      currentPage = characters.nextPage;
-      loadAnotherPage();
+      currentPage++;
+      loadAnotherPage(characters.next);
     });
     previousPaginationButton.addEventListener("click", () => {
-      currentPage = characters.previousPage;
-      loadAnotherPage();
+      currentPage--;
+      loadAnotherPage(characters.previous);
     });
   };
 
-  const loadAnotherPage = () => {
-    populateCharacters(currentPage);
+  const loadAnotherPage = (page) => {
+    populateCharacters(page);
     window.scrollTo(0, 0);
     hideBio();
   };
@@ -230,10 +240,34 @@
     }
   };
 
+  const search = () => {
+    const form = document.querySelector(".js-searchForm");
+    const input = document.querySelector(".js-searchInput");
+    console.log(input.value);
+
+    const onSubmit = (event) => {
+      event.preventDefault();
+      const searchURL = `${SWAPI_URL}?search=${input.value.trim()}`;
+      populateCharacters(searchURL);
+      currentPage = 1;
+    };
+
+    form.addEventListener("submit", onSubmit);
+  };
+
+  const listenOnHomeButton = () => {
+    const homeButton = document.querySelector(".js-homeButton");
+
+    homeButton.addEventListener("click", () => populateCharacters());
+
+  }
+
   const init = () => {
     populateImages();
-    populateCharacters(currentPage);
+    populateCharacters();
+    listenOnHomeButton();
     changeTheme();
+    search();
   };
   init();
 }
