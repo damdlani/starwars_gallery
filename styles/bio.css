@@ -1,21 +1,41 @@
+@keyframes spinner {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
 .bioSection {
-  color: #ffe81f;
+  display: grid;
+  margin-top: 50px;
   font-family: star-jedi;
   font-weight: lighter;
   position: fixed;
-  top: 10%;
-  bottom: 10%;
   left: 50%;
   transform: translateX(-50%);
   width: 500px;
+  min-height: 450px;
   z-index: 2;
   background-color: #000;
   border: 1px solid;
-  transition: transform .3s ease;
+}
+@media (max-width: 858px) and (max-height: 500px) and (orientation: landscape) {
+  .bioSection {
+    margin-top: 10px;
+    min-height: 340px;
+    font-size: 12px;
+  }
+}
+@media (max-width: 579px) {
+  .bioSection {
+    width: 300px;
+    min-height: 250px;
+    font-size: 12px;
+  }
 }
 .bio {
-  height: 100%;
-  width: 100%;
   padding: 16px 16px 24px;
   display: grid;
   grid-gap: 16px;
@@ -24,7 +44,29 @@
   "image meta"
   ;
   grid-template-rows: auto 1fr;
-  grid-template-columns: 2fr 1fr;
+  grid-template-columns: 1fr 1fr;
+}
+@media (max-width: 858px) and (max-height: 500px) and (orientation: landscape) {
+  .bio {
+    grid-gap: 8px;
+    grid-template-columns: 1fr 1fr;
+  }
+}
+.bio__loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.bio__loading::after {
+  content: "";
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  margin: 0 10px;
+  border-radius: 50%;
+  border-top: 1px solid;
+  animation: spinner 1s infinite forwards;
 }
 .bio__header {
   grid-area: header;
@@ -33,28 +75,34 @@
   font-size: 36px;
   text-align: center;
 }
+@media (max-width: 858px) and (max-height: 500px) and (orientation: landscape) {
+  .bio__name {
+   font-size: 24px;
+  }
+}
+@media (max-width: 579px) {
+  .bio__name {
+    font-size: 24px;
+  }
+}
 .bio__image {
-  /* align-self: center; */
   background-position: top;
   background-repeat: no-repeat;
   background-size: cover;
   grid-area: image;
-  /* height: 90%; */
 }
 .bio__meta {
-  /* padding: 20px; */
   grid-area: meta;
   text-align: right;
 }
+
 .meta__data {
   color: #fff;
   margin-bottom: 5px;
 }
-
 .bio__note {
   font-size: 16px;
   margin-top: 10px;
-  transition: 0.3s ease;
 }
 .bio__exitButton {
   position: absolute;
@@ -63,9 +111,7 @@
   background-color: transparent;
   border: none;
   font-size: 24px;
-  transition: 0.1s ease;
   color: #ffe81f;
-  
 }
 .bio__exitButton:hover {
   color: #555;
