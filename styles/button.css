@@ -1,0 +1,30 @@
+.button {
+    font-family: star-jedi;
+    font-weight: lighter;
+    font-size: 14px;
+    background-color: transparent;
+    color: #fff;
+    border: none;
+    transition: .3s ease;
+}
+@media (max-width: 574px) {
+    .button {
+        font-size: 12px;
+    }
+  }
+
+.button:hover {
+    cursor: pointer;
+    color: #ffe81f;
+}
+.button:disabled {
+    color: #666;
+    cursor: not-allowed;
+    
+}
+.button--light {
+  color: #000;
+}
+.button--light:hover {
+    color: #333;
+}

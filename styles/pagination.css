@@ -9,7 +9,7 @@
 .pagination__button {
     padding: 5px;
     font-family: inherit;
-    background-color: #000;
+    background-color: transparent;
     color: #fff;
     outline: none;
     border: none;

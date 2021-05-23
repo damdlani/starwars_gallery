@@ -23,22 +23,20 @@
   font-family: arial;
   overflow-y: scroll;
   min-height: 100vh;
-  
-  background-color: #000;
   scroll-behavior: smooth;
 }
 
 .wrapper {
   margin: 0 auto;
   padding: 0 20px;
-  max-width: 1150px;
   min-height: 100vh;
   font-family: star-hol;
   font-weight: bold;
-  color: #ffe81f;
   background-color: #000;
+  color: #ffe81f;
   display: grid;
   grid-template-rows: auto auto 1fr auto;
+  transition: .3s ease;
 }
 .wrapper--light {
   background-color: #fff;

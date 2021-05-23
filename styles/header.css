@@ -1,11 +1,10 @@
 .header {
   padding: 5px;
-  font-family: star-jedi;
+  margin: 10px;
   font-size: 32px;
   line-height: 1;
-  border-bottom: 1px solid black;
   text-align: center;
-  color: #000;
+  /* transition: .3s ease; */
 }
 @media (max-width: 858px) {
   .header {
@@ -17,8 +16,12 @@
     font-size: 18px;
   }
 }
-.header--dark {
-  font-family: star-hol;
-  /* background-color: rgba(0,0,0); */
-  color: #ffe81f;
+@media (max-width: 574px) {
+  .header {
+    font-size: 14px;
+  }
+}
+.header--light {
+  font-family: star-jedi;
+  color: #000;
 }

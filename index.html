@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="/styles/header.css">
   <link rel="stylesheet" href="/styles/subheader.css">
   <link rel="stylesheet" href="/styles/gallery.css">
+  <link rel="stylesheet" href="/styles/button.css">
   <link rel="stylesheet" href="/styles/bio.css">
   <link rel="stylesheet" href="/styles/pagination.css">
   <script defer src="js/index.js"></script>
@@ -20,16 +21,16 @@
 </head>
 
 <body>
-  <div class="wrapper">
-    <header class="header header--dark">
+  <div class="wrapper js-wrapper">
+    <header class="header">
       <h1>Star Wars Gallery</h1>
 
     </header>
     <div class="subheader">
-      <form class="subheader__search js-searchForm">
+      <form class="subheader__searchForm js-searchForm">
         <input type="text" required placeholder="use your force" minlength="1" class="search__input js-searchInput" />
-        <button type="submit" class="search__button js-searchButton">search</button>
-        <button class="search__button js-homeButton">home</button>
+        <button type="submit" class="button js-searchButton">search</button>
+        <button class="button js-homeButton">home</button>
       </form>
       <div class="subheader__theme">
         <span>dark side</span>
