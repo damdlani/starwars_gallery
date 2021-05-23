@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="/styles/global.css">
   <link rel="stylesheet" href="/styles/status.css">
   <link rel="stylesheet" href="/styles/header.css">
-  <link rel="stylesheet" href="/styles/theme.css">
+  <link rel="stylesheet" href="/styles/subheader.css">
   <link rel="stylesheet" href="/styles/gallery.css">
   <link rel="stylesheet" href="/styles/bio.css">
   <link rel="stylesheet" href="/styles/pagination.css">
@@ -26,7 +26,12 @@
 
     </header>
     <div class="subheader">
-      <div class="theme">
+      <form class="subheader__search js-searchForm">
+        <input type="text" required placeholder="use your force" minlength="1" class="search__input js-searchInput" />
+        <button type="submit" class="search__button js-searchButton">search</button>
+        <button class="search__button js-homeButton">home</button>
+      </form>
+      <div class="subheader__theme">
         <span>dark side</span>
         <label class="theme__box">
           <input hidden type="checkbox" class="theme__button js-themeButton">
@@ -34,17 +39,13 @@
         </label>
         <span>light side</span>
       </div>
-      <form class="js-searchForm">
-        <input type="text" required placeholder="Use your force" minlength="1" class="js-searchInput" />
-        <button type="submit" class="js-searchButton">Search</button>
-      </form>
-      <button class="js-homeButton">Home</button>
     </div>
     <main class="main">
       <section class="gallery js-gallery"></section>
-      
+
     </main>
-    <section class="js-bio"></section>
+    <section class="js-bio">
+    </section>
     <section class="pagination js-pagination"></section>
     <aside class="status js-status"></aside>
   </div>

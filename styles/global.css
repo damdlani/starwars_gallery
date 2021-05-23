@@ -23,10 +23,9 @@
   font-family: arial;
   overflow-y: scroll;
   min-height: 100vh;
-  color: #ffe81f;
+  
   background-color: #000;
   scroll-behavior: smooth;
-  
 }
 
 .wrapper {
@@ -36,9 +35,15 @@
   min-height: 100vh;
   font-family: star-hol;
   font-weight: bold;
+  color: #ffe81f;
   background-color: #000;
   display: grid;
   grid-template-rows: auto auto 1fr auto;
+}
+.wrapper--light {
+  background-color: #fff;
+  color: #000;
+  font-family: star-jedi;
 }
 
 .main {
