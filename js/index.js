@@ -1,20 +1,16 @@
 {
-  const SWAPI_URL = "http://swapi.dev/api/people/";
+  const SWAPI_URL = "http://swapi.dev/api";
   const IMAGES_API_URL = "https://akabab.github.io/starwars-api/api/all.json";
 
   let characters = {};
   let images = [];
+  let films = [];
   let currentPage = 1;
   let darkTheme = false;
   const maxItemsPerPage = 10;
 
   const fetchData = async (directory) => {
     try {
-      renderStatus({
-        loading: true,
-        error: false,
-      });
-
       const response = await fetch(directory);
 
       if (!response.ok) {
@@ -34,8 +30,13 @@
 
   const populateCharacters = async (page) => {
     console.log(page);
+    renderStatus({
+      loading: true,
+      error: false,
+    });
+
     const { count, next, previous, results } = await fetchData(
-      page ? page : SWAPI_URL
+      page ? page : `${SWAPI_URL}/people/`
     );
 
     characters = {
@@ -61,6 +62,14 @@
 
     images = data.map(({ name, image }) => {
       return { name, image };
+    });
+  };
+
+  const populateFilms = async () => {
+    const { results } = await fetchData(`${SWAPI_URL}/films/`);
+
+    films = results.map(({ episode_id }) => {
+      return episode_id;
     });
   };
 
@@ -100,60 +109,97 @@
       : (gallery.classList.add("gallery--noResults"),
         (gallery.innerHTML = `<div class="gallery__noResults">Sorry, no results were found.</div>`));
 
-    listenOnShowBio(true);
+    listenOnShowBio();
   };
 
-  const listenOnShowBio = (listen) => {
+  const listenOnShowBio = () => {
     const galleryItems = document.querySelectorAll(".js-showBioButton");
-    console.log(listen);
-    if (galleryItems && listen) {
-      console.log("adding");
-      galleryItems.forEach((button, index) => {
-        button.addEventListener("click", () => {
-          showBio(index);
-        });
-      });
-    }
-    if (!listen) {
-      console.log("removing");
-      galleryItems.forEach((button, index) => {
-        button.removeEventListener(
-          "click",
-          () => {
-            showBio(index);
-          },
-          false
-        );
-      });
-    }
+
+    galleryItems.forEach((button, index) => {
+      button.addEventListener("click", showBio);
+      button.index = index;
+    });
   };
 
-  const showBio = (index) => {
-    listenOnShowBio(false);
+  const showBio = async ({currentTarget}) => {
+    console.log(currentTarget.index)
+
+    const galleryItems = document.querySelectorAll(".js-showBioButton");
+    galleryItems.forEach((button) => {
+      button.removeEventListener("click", showBio);
+    });
+
     const bioSection = document.querySelector(".js-bio");
     bioSection.classList.add("bioSection");
-    bioSection.innerHTML = characterDetailsToHTML(characters.characters[index]);
+    const characterHTML = await characterDetailsToHTML(
+      characters.characters[currentTarget.index]
+    );
+    bioSection.innerHTML = characterHTML ? characterHTML : "loading";
 
     listenOnHideButton();
   };
 
-  const characterDetailsToHTML = (character) => {
-    console.log(character);
-    const { name, height, mass } = character;
+  const characterDetailsToHTML = async (character) => {
+    //TODO  render bio loading info
+
+    const {
+      name,
+      height,
+      mass,
+      birth_year,
+      homeworld,
+      species,
+      films: movies,
+    } = character;
+    const { name: speciesName } = !!species.length
+      ? await fetchData(species)
+      : { name: null };
+    const { name: planetName } = !!homeworld.length
+      ? await fetchData(homeworld)
+      : { name: null };
 
     const detailsHTMLString = `
-      <div class="bio">
-        <div class="bio__header">           
-            <h2 class="bio__name">${name.toLowerCase()}</h2>
-            <button class="bio__exitButton js-hideBioButton">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-        <p class="bio__note">${height}</p>
-        <p class="bio__note">${mass}</p>
+    <div class="bio">
+      <header class="bio__header">
+        <h2 class="bio__name">${name.toLowerCase()}</h2>
+        <button class="bio__exitButton js-hideBioButton">
+
+          <i class="fas fa-times"></i>
+        </button>
+      </header>
+      <div class="bio__image" style="background-image: url(${findCharacterImage(
+        name
+      )});"></div>
+      <div class="bio__meta">
+        <p class="meta__label">Height: </p>
+        <p class="meta__data">${height}</p>
+        <p class="meta__label">Weight: </p>
+        <p class="meta__data">${mass}</p>
+        <p class="meta__label">Born: </p>
+        <p class="meta__data">${
+          birth_year.toLowerCase()
+          //toLowerCase() in all cases is because of the font used in app - uppercase letters looks different
+        }</p>
+        ${
+          !!planetName
+            ? `<p class="meta__label">Homeworld: </p>
+          <p class="meta__data">${planetName}</p>`
+            : ""
+        }
+        ${
+          !!speciesName
+            ? `<p class="meta__label">Species: </p>
+          <p class="meta__data">${speciesName}</p>`
+            : ""
+        }
+        <p class="meta__label">Movie episodes: </p>
+        <p class="meta__data">${movies
+          .map((_, index) => films[index])
+          .join(", ")}</p>
       </div>
+    </div>
     `;
-    return detailsHTMLString;
+    return await detailsHTMLString;
   };
 
   const listenOnHideButton = () => {
@@ -169,6 +215,7 @@
 
     bioSection.classList.remove("bioSection");
     bioSection.innerHTML = "";
+    listenOnShowBio();
   };
 
   const renderPagination = () => {
@@ -178,7 +225,9 @@
       <button ${
         !characters.previous ? "disabled" : ""
       } class="pagination__button js-prevPage">Prev</button>
-      <span>Page ${characters.characters.length ? currentPage : 0} of ${characters.numberOfPages}</span>
+      <span>Page ${characters.characters.length ? currentPage : 0} of ${
+      characters.numberOfPages
+    }</span>
       <button ${
         !characters.next ? "disabled" : ""
       } class="pagination__button js-nextPage">Next</button>
@@ -258,12 +307,15 @@
   const listenOnHomeButton = () => {
     const homeButton = document.querySelector(".js-homeButton");
 
-    homeButton.addEventListener("click", () => populateCharacters());
-
-  }
+    homeButton.addEventListener("click", (event) => {
+      event.preventDefault();
+      populateCharacters();
+    });
+  };
 
   const init = () => {
     populateImages();
+    populateFilms();
     populateCharacters();
     listenOnHomeButton();
     changeTheme();

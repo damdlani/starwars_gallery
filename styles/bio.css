@@ -1,6 +1,7 @@
 .bioSection {
   color: #ffe81f;
   font-family: star-jedi;
+  font-weight: lighter;
   position: fixed;
   top: 10%;
   bottom: 10%;
@@ -9,23 +10,45 @@
   width: 500px;
   z-index: 2;
   background-color: #000;
-  /* opacity: .95; */
   border: 1px solid;
   transition: transform .3s ease;
 }
 .bio {
-  width: 548px;
-  padding: 16px;
-  background-color: var(--unnamed-color-ffffff);
-  border: 1px solid var(--unnamed-color-8ecae6);
-  transition: easeIn 0.5s forwards;
+  height: 100%;
+  width: 100%;
+  padding: 16px 16px 24px;
+  display: grid;
+  grid-gap: 16px;
+  grid-template-areas: 
+  "header header"
+  "image meta"
+  ;
+  grid-template-rows: auto 1fr;
+  grid-template-columns: 2fr 1fr;
 }
 .bio__header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  grid-area: header;
 }
 .bio__name {
+  font-size: 36px;
+  text-align: center;
+}
+.bio__image {
+  /* align-self: center; */
+  background-position: top;
+  background-repeat: no-repeat;
+  background-size: cover;
+  grid-area: image;
+  /* height: 90%; */
+}
+.bio__meta {
+  /* padding: 20px; */
+  grid-area: meta;
+  text-align: right;
+}
+.meta__data {
+  color: #fff;
+  margin-bottom: 5px;
 }
 
 .bio__note {
