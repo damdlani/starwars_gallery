@@ -6,7 +6,7 @@
   let images = [];
   let films = [];
   let currentPage = 1;
-  let darkTheme = false;
+  let lightTheme = false;
   const maxItemsPerPage = 10;
 
   const fetchData = async (directory) => {
@@ -29,7 +29,6 @@
   };
 
   const populateCharacters = async (page) => {
-    console.log(page);
     renderStatus({
       loading: true,
       error: false,
@@ -47,7 +46,6 @@
       numberOfPages: Math.ceil(count / maxItemsPerPage),
       characters: results,
     };
-    console.log(characters);
     renderStatus({
       loading: false,
       error: false,
@@ -83,7 +81,7 @@
   const characterToHTML = ({ name }) => {
     const characterHTMLString = `
     <div class="gallery__item ${
-      darkTheme ? "gallery__item--dark" : ""
+      lightTheme ? "gallery__item--light" : ""
     } js-showBioButton">
 
       <div class="item__image" style="background-image: url(${findCharacterImage(
@@ -107,41 +105,43 @@
       ? (gallery.classList.remove("gallery--noResults"),
         (gallery.innerHTML = charactersToRender))
       : (gallery.classList.add("gallery--noResults"),
-        (gallery.innerHTML = `<div class="gallery__noResults">Sorry, no results were found.</div>`));
+        (gallery.innerHTML = `<div class="gallery__noResults">We sorry are, results found no.</div>`));
 
-    listenOnShowBio();
+    listenOnShowBio(true);
   };
 
-  const listenOnShowBio = () => {
+  const listenOnShowBio = (listen) => {
     const galleryItems = document.querySelectorAll(".js-showBioButton");
 
-    galleryItems.forEach((button, index) => {
+    if (listen) galleryItems.forEach((button, index) => {
       button.addEventListener("click", showBio);
       button.index = index;
     });
-  };
-
-  const showBio = async ({currentTarget}) => {
-    console.log(currentTarget.index)
-
-    const galleryItems = document.querySelectorAll(".js-showBioButton");
-    galleryItems.forEach((button) => {
+    if (!listen) galleryItems.forEach((button) => {
       button.removeEventListener("click", showBio);
     });
+  };
 
+  const showBio = async ({ currentTarget }) => {
+    listenOnShowBio(false);
+    listenOnChangeTheme(false);
     const bioSection = document.querySelector(".js-bio");
+
     bioSection.classList.add("bioSection");
+    
+    bioSection.innerHTML = `<div class="bio__loading">Details loading is </div>`;
+    if (lightTheme) bioSection.classList.add("bioSection--light");
+
+
     const characterHTML = await characterDetailsToHTML(
       characters.characters[currentTarget.index]
     );
-    bioSection.innerHTML = characterHTML ? characterHTML : "loading";
+    bioSection.innerHTML = characterHTML;
 
     listenOnHideButton();
   };
 
   const characterDetailsToHTML = async (character) => {
-    //TODO  render bio loading info
-
     const {
       name,
       height,
@@ -162,7 +162,7 @@
     <div class="bio">
       <header class="bio__header">
         <h2 class="bio__name">${name.toLowerCase()}</h2>
-        <button class="bio__exitButton js-hideBioButton">
+        <button class="button ${lightTheme && 'button--light'} bio__exitButton js-hideBioButton">
 
           <i class="fas fa-times"></i>
         </button>
@@ -170,33 +170,42 @@
       <div class="bio__image" style="background-image: url(${findCharacterImage(
         name
       )});"></div>
-      <div class="bio__meta">
-        <p class="meta__label">Height: </p>
-        <p class="meta__data">${height}</p>
-        <p class="meta__label">Weight: </p>
-        <p class="meta__data">${mass}</p>
-        <p class="meta__label">Born: </p>
-        <p class="meta__data">${
+      <dl class="bio__meta">
+        <dt class="meta__label">Height: </dt>
+        <dd class="meta__data ${lightTheme && `meta__data--light`}">${height}</dd>
+
+        <dt class="meta__label">Weight: </dt>
+        <dd class="meta__data ${lightTheme && `meta__data--light`}">${mass}</dd>
+
+        <dt class="meta__label">Born: </dt>
+        <dd class="meta__data ${lightTheme && `meta__data--light`}">${
           birth_year.toLowerCase()
-          //toLowerCase() in all cases is because of the font used in app - uppercase letters looks different
-        }</p>
+          //toLowerCase() in all cases is because of the font used in app - uppercase letters look different
+        }</dd>
+
         ${
           !!planetName
-            ? `<p class="meta__label">Homeworld: </p>
-          <p class="meta__data">${planetName}</p>`
+            ? `<dt class="meta__label">Homeworld: </dt>
+          <dd class="meta__data ${lightTheme && `meta__data--light`}">${planetName}</dd>`
             : ""
         }
+
         ${
           !!speciesName
-            ? `<p class="meta__label">Species: </p>
-          <p class="meta__data">${speciesName}</p>`
+            ? `<dt class="meta__label">Species: </dt>
+          <dd class="meta__data ${lightTheme && `meta__data--light`}">${speciesName}</dd>`
             : ""
         }
-        <p class="meta__label">Movie episodes: </p>
-        <p class="meta__data">${movies
-          .map((_, index) => films[index])
-          .join(", ")}</p>
-      </div>
+
+        ${
+          !!films.length
+            ? `<dt class="meta__label">Movie episodes: </dt>
+          <dd class="meta__data ${lightTheme && `meta__data--light`}">${movies
+            .map((_, index) => films[index])
+            .join(", ")}</dd>`
+            : ""
+        }
+      </dl>
     </div>
     `;
     return await detailsHTMLString;
@@ -213,9 +222,10 @@
   const hideBio = () => {
     const bioSection = document.querySelector(".js-bio");
 
-    bioSection.classList.remove("bioSection");
+    bioSection.classList.remove("bioSection", "bioSection--light");
     bioSection.innerHTML = "";
-    listenOnShowBio();
+    listenOnShowBio(true);
+    listenOnChangeTheme(true);
   };
 
   const renderPagination = () => {
@@ -224,25 +234,46 @@
     const paginationHTML = `
       <button ${
         !characters.previous ? "disabled" : ""
-      } class="pagination__button js-prevPage">Prev</button>
+      } class="button ${lightTheme && "button--light"} js-prevPage">Prev</button>
       <span>Page ${characters.characters.length ? currentPage : 0} of ${
       characters.numberOfPages
     }</span>
       <button ${
         !characters.next ? "disabled" : ""
-      } class="pagination__button js-nextPage">Next</button>
+      } class="button ${lightTheme && "button--light"} js-nextPage">Next</button>
     `;
     paginationElement.innerHTML = paginationHTML;
     bindPaginationButtons();
   };
 
-  const changeTheme = () => {
-    const button = document.querySelector(".js-themeButton");
-    button.addEventListener("click", () => {
-      darkTheme = !darkTheme;
-      renderCharacters();
-    });
+  const listenOnChangeTheme = (listen) => {
+    const themeButton = document.querySelector(".js-themeButton");
+    
+    if (listen) {
+      themeButton.addEventListener("click", changeTheme)
+      themeButton.disabled = false;
+    };
+    if (!listen) {
+      themeButton.removeEventListener("click", changeTheme);
+      themeButton.disabled = true;
+    };
+
   };
+
+  const changeTheme = () => {
+    const wrapper = document.querySelector(".js-wrapper");
+    const header = document.querySelector(".header");
+    const searchInput = document.querySelector(".search__input");
+    const buttons = document.querySelectorAll(".button");
+
+    lightTheme = !lightTheme;
+    wrapper.classList.toggle("wrapper--light");
+    header.classList.toggle("header--light");
+    searchInput.classList.toggle("search__input--light");
+    buttons.forEach(button => button.classList.toggle("button--light"));
+    renderPagination();
+    renderCharacters();
+  }
 
   const bindPaginationButtons = () => {
     const nextPaginationButton = document.querySelector(".js-nextPage");
@@ -266,38 +297,37 @@
 
   const renderStatus = ({ loading, error }) => {
     const statusElement = document.querySelector(".js-status");
+    const statusElementClassList = statusElement.classList;
 
+    lightTheme ? statusElementClassList.add("status--light") : statusElementClassList.remove("status--light");
     if (loading) {
-      statusElement.classList.remove("status--hidden");
-      statusElement.classList.add("status--loading");
-      statusElement.innerHTML = "Loading data is...";
+      statusElementClassList.remove("status--hidden");
+      statusElementClassList.add("status--loading");
+      statusElement.innerHTML = `<p class="status__note">Loading&nbsp;data&nbsp;is  </p>`;
     }
 
     if (error) {
-      statusElement.classList.remove("status--loading");
-      statusElement.classList.remove("status--hidden");
-      statusElement.innerHTML = "occured error an - try please again ";
-      const errorYoda = statusElement.appendChild(document.createElement("p"));
-      errorYoda.classList.add("status--yoda");
-      errorYoda.innerHTML = " È";
+      statusElementClassList.remove("status--loading", "status--hidden");
+      statusElement.innerHTML = `<p class="status__note">occured&nbsp;error&nbsp;an - try&nbsp;please&nbsp;again </p>`;
+      statusElementClassList.add("status--error");
     }
 
     if (!loading && !error) {
-      statusElement.classList.remove("status--loading");
-      statusElement.classList.add("status--hidden");
+      statusElementClassList.remove("status--loading", "status--error");
+      statusElementClassList.add("status--hidden");
       statusElement.innerHTML = "";
     }
   };
 
-  const search = () => {
+  const searchCharacters = () => {
     const form = document.querySelector(".js-searchForm");
     const input = document.querySelector(".js-searchInput");
-    console.log(input.value);
 
     const onSubmit = (event) => {
       event.preventDefault();
-      const searchURL = `${SWAPI_URL}?search=${input.value.trim()}`;
+      const searchURL = `${SWAPI_URL}/people/?search=${input.value.trim()}`;
       populateCharacters(searchURL);
+      input.value = "";
       currentPage = 1;
     };
 
@@ -318,8 +348,8 @@
     populateFilms();
     populateCharacters();
     listenOnHomeButton();
-    changeTheme();
-    search();
+    listenOnChangeTheme(true);
+    searchCharacters();
   };
   init();
 }
