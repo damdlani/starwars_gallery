@@ -1,5 +1,5 @@
 {
-  const SWAPI_URL = "http://swapi.dev/api";
+  const SWAPI_URL = "https://swapi.dev/api";
   const IMAGES_API_URL = "https://akabab.github.io/starwars-api/api/all.json";
 
   let characters = {};
