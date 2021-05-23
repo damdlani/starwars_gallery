@@ -10,6 +10,7 @@
   const maxItemsPerPage = 10;
 
   const fetchData = async (directory) => {
+    console.log(directory);
     try {
       const response = await fetch(directory);
 
@@ -140,7 +141,15 @@
 
     listenOnHideButton();
   };
-
+  /*
+  below function is only needed because api gives http links and that generates errors
+  on https deployed github page
+  */
+  const changeHTTPtoHTTPS = (directory) => {
+    const url = directory.split("");
+    url.splice(4, 0, "s");
+    return url.join("");
+  }
   const characterDetailsToHTML = async (character) => {
     const {
       name,
@@ -151,11 +160,12 @@
       species,
       films: movies,
     } = character;
+
     const { name: speciesName } = !!species.length
-      ? await fetchData(species)
+      ? await fetchData(changeHTTPtoHTTPS(species[0]))
       : { name: null };
     const { name: planetName } = !!homeworld.length
-      ? await fetchData(homeworld)
+      ? await fetchData(changeHTTPtoHTTPS(homeworld))
       : { name: null };
 
     const detailsHTMLString = `
@@ -290,7 +300,7 @@
   };
 
   const loadAnotherPage = (page) => {
-    populateCharacters(page);
+    populateCharacters(changeHTTPtoHTTPS(page));
     window.scrollTo(0, 0);
     hideBio();
   };
