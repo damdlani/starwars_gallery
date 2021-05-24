@@ -22,7 +22,6 @@
 :root {
   font-family: arial;
   overflow-y: scroll;
-  min-height: 100vh;
   scroll-behavior: smooth;
 }
 

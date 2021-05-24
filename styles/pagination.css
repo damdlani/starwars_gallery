@@ -1,26 +1,6 @@
 .pagination {
     text-align: center;
     padding: 20px 10px;
-    align-self: end;
     font-family: star-jedi;
     font-weight: lighter;
-}
-
-.pagination__button {
-    padding: 5px;
-    font-family: inherit;
-    background-color: transparent;
-    color: #fff;
-    outline: none;
-    border: none;
-    transition: .3s ease;
-}
-
-.pagination__button:hover {
-    cursor: pointer;
-    color: #ffe81f;
-}
-.pagination__button:disabled {
-    color: #333;
-    cursor: unset;
 }

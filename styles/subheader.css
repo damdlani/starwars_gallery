@@ -3,7 +3,6 @@
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-around;
-
 }
 
 /* SEARCH */
@@ -19,14 +18,13 @@
 }
 
 .search__input {
-  font-family: star-jedi;
-  color: #fff;
-  border: 1px solid rgb(118, 118, 118);
-  outline: none;
-  background-color: transparent;
   padding: 5px;
   width: 150px;
-  transition: .3s;
+  background-color: transparent;
+  color: #fff;
+  border: 1px solid #767676;
+  outline: none;
+  font-family: star-jedi;
 }
 
 @media (max-width: 574px) {
@@ -48,7 +46,6 @@
 .search__input:hover {
   filter: brightness(1.2);
 }
-
 
 /*THEME*/
 
