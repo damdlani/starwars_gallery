@@ -349,6 +349,7 @@
 
     homeButton.addEventListener("click", (event) => {
       event.preventDefault();
+      currentPage = 1;
       populateCharacters();
     });
   };
